@@ -1,5 +1,5 @@
 # IF867
-Intro to deep learning
+CIn UFPE Intro to deep learning course
 
 ## Problems in Neural Network And Deep Learning Book 
 - Chapter 1 []
