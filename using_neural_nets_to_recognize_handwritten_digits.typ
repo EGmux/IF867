@@ -1,6 +1,7 @@
 #let comment(body) = emph(text(blue)[#body])
 #let warning(body) = emph(text(orange)[#body])
 #set math.mat(delim: "[")
+
 == Sigmoid neurons simulating perceptrons, part I
 Suppose we take all the weights annd biases in a network of perceptrons, and multiply them by a positive constant, $c > 0$. Show that the behaviour of the network doesn't change.
 
@@ -117,3 +118,80 @@ $
 $
 
 we can see the output is $0101$ as expected, analogous tests can be applied to other outputs in the "old output layer"
+
+== Prove the assertion of the last paragraph. _Hint_: If you're not already familiar with the _Cauchy-Schawarz inequality_, you may find it helpful to familiarize yourself with it.
+
+We'll derive the proof without the inequality by applying analytic geometry techniques
+
+$ \ gradient C dot Delta v \ $
+
+given the above expression we need to minimize it
+
+note that both $gradient C$ and $Delta v$ are vectors, thus we can start by projecting the $Delta v$ vector in the $gradient C$ one.
+
+$ \ Delta v = (<gradient C, Delta v>) / (norm(gradient C)norm(gradient C)) gradient C \ $
+
+we also know the dot product of both vectors can be expressed as
+
+$
+  \ cos theta = (<gradient C, Delta v>) / ( norm(gradient C)norm(Delta v) )\
+  \ cos theta norm(gradient C)norm(Delta v) = <gradient C, Delta v>\
+$
+
+thus substituting the last equation in the projection one
+
+$ \ Delta v = (cos theta norm(Delta v)) / norm(gradient C) = (cos theta)epsilon / norm(gradient C) gradient C \ $
+
+remember we want to minimize this function so we choose $cos theta = -1 arrow.r.double theta = pi$
+
+and we arrive at the desired equation
+
+$ \ Delta v = - eta gradient C, eta = epsilon / norm(gradient C) \ $
+
+== I explained gradient descent when $C$ is a function of two variables, and when it's a function of more than two variables. What happens when $C$ is a function of just one variable? Can you provide a geometric interpretaion of what gradient descent is doing in the one-dimensional case?
+
+imagine a cubic curve
+
+#set text(size: 10pt)
+#import "@preview/cetz:0.3.2"
+#import "@preview/cetz-plot:0.1.1": *
+#let f1(x) = calc.pow(x, 3)
+#let f2(x) = calc.pow(3 * x, 2) // derivative
+#let tx(x) = 5 + x / 2
+#let ty(x, c: 0) = calc.abs(5 + (x * 10 / 1000)) + c
+#cetz.canvas({
+  import cetz.draw: *
+  plot.plot(
+    name: "plot",
+    size: (10, 10),
+    x-tick-step: 1,
+    y-tick-step: none,
+    {
+      let domain = (-10, 10)
+      plot.add(f1, domain: domain)
+      plot.add-anchor("pt", (1, 3))
+      plot.add-anchor("pt2", (3, 27))
+      plot.add-anchor("pt3", (4, 64))
+      plot.add-anchor("pta", (-9, -729))
+      plot.add-anchor("ptb", (9, 729))
+      // plot.add-anchor("pa", (1, 3))
+      // plot.add-anchor("pa2", (3, 27))
+      // plot.add-anchor("pa3", (4, 64))
+    },
+  )
+
+  line("plot.pt", (tx(1) + 1, ty(3)), mark: (end: "stealth"))
+  line("plot.pt", (tx(1) - 1, ty(3)), mark: (end: "stealth"))
+  line("plot.pta", (tx(-9) + 0.7, (ty(-729) - 1) + 2), mark: (end: "stealth"))
+  line("plot.pta", (tx(-9), ty(-729) - 1), mark: (end: "stealth"))
+  line("plot.ptb", (tx(9) + 0.7 - 0.3, (ty(729) - 4) + 1.8), mark: (end: "stealth"))
+  line("plot.ptb", (tx(9) - 0.7 - 0.3, (ty(729) - 4) - 1.8), mark: (end: "stealth"))
+  // line("plot.ptb", (tx(-4) - 1, ty(-64)), mark: (end: "stealth"))
+  // line("plot.pt3", (5 + 4, 5), mark: (end: "stealth"))
+  // line("plot.pa", (5 - 1, 5), mark: (end: "stealth"))
+  // line("plot.pa2", (5 - 3, 5), mark: (end: "stealth"))
+  // line("plot.pa3", (5 - 4, 5), mark: (end: "stealth"))
+})
+
+note that if we start from the leftmost point the algorithm would halt, due to the fact that, due to domain constraints, there's no where else to go, however if we start in the rightmost side, one can see that eventually the algoritm is going to halt in the region where $(d f) / (d x) = 0$ a saddle point or maybe in the leftmost point, _depends on the learning rate_, meaning that the algorithm is effectively slicing a plane,_if we consider this path to belong to a surface, and looking for points where $(d f) / (d x) = 0$ that happens in sadddle points, global and local minima.
+
