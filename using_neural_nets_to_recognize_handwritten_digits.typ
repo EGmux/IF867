@@ -201,7 +201,7 @@ remember the following, already proved by the author
 
 $
   \ delta_j^l = (partial C) / (partial z_k^l) & #comment(", error due to weighted sum in the j-th neuron in the l-th layer ") \
-  \ z_j^l = w_(j k)^l a_k^(l-1) + b_j^l & #comment(", j-th neuron in the l-th layer weighted sum")\
+  \ z_j^l =sum_k w_(j k)^l a_k^(l-1) + b_j^l & #comment(", j-th neuron in the l-th layer weighted sum")\
   \
 $
 
@@ -219,8 +219,64 @@ this proves BP3
 
 now we prove BP4, again by applying the chain rule
 
-$ \ (partial C) / (partial w_(k j)^l) = (partial C) / (partial z_j^l) (partial z_j^l) / (partial w_(j k)^l) \ $
+$ \ (partial C) / (partial w_(j k)^l) = (partial C) / (partial z_j^l) (partial z_j^l) / (partial w_(j k)^l) \ $
 
 and the partial derivative for $(partial z_j^l) / (partial w_(j k)^l) = a_k^(l-1)$
 
 thus we have $(partial C) / (partial w_(j k)^l) = a_k^(l-1) delta_j^l$ as desired.
+
+=== *Backpropagation with a single modified neuron* Suppose we modify a single neuron in a feedforward network so that the output from the neuron is given by $f(Sigma_j w_j x_j + b)$, where $f$ is some function other than the sigmoid. How should we modify the backpropagation algorithm in this case?
+
+First we start by computing the error due to the weighted sum in the last layer, the output layer.
+
+$ \ (partial C) / (partial z_j^L) = (partial C) / (partial a_j^L) (partial a_j^L) / (partial z_j^L) \ $
+
+note the modification in this case, the second term will change for $j = h$
+
+thus
+
+$ \ (partial C) / (partial z_h^L) = (partial C) / (partial a_h^L) (partial a_h^L)f'(z_h^L) \ $
+
+and for the other case, j $!=$ h
+$ \ (partial C) / (partial z_j^L) = (partial C) / (partial a_j^L) (partial a_j^L)sigma'(z_j^L) \ $
+
+now we consider how this impacts the backpropagate step
+
+$ \ (partial C) / (partial z_j^l) = Sigma_k (partial C) / (partial z_k^(l+1)) (partial z_k^(l+1)) / (partial z_j^l)\ $
+
+remembering the notation for $(partial C) / (partial z_k^l) equiv delta_k^l$
+
+$ \ delta_l^j = delta_k^(l+1) Sigma_k (Sigma_(j!=h) w_(k j)^(l+1) a_j^l + b_k^(l+1)+w_(k h)^(l+1)f'(z_h^l)) \ $
+
+the updates won't change their form, only the output error and backpropagate
+
+=== Backpropagation with linear neurons Suppose we replace the usual non-linear $sigma$ function with $sigma(z) = z$ throughout the network. Rewrite the backpropagation algorithm for this case.
+
+again we start by computing the output error
+
+$ \ delta_j^L equiv (partial C) / (partial z_j^L) \ $
+
+and by chain rule
+
+$ \ (partial C) / (partial z_j^L) = (partial C) / (partial a_j^L) (partial a_j^L) / (partial z_j^L) \ $
+
+note that the activation function changed, thus the partial derivative is $1$
+
+$ \ (partial C) / (partial z_j^L) = (partial C) / (partial a_j^L) \ $
+
+now we consider the backpropagate task
+
+$ \ delta_j^l equiv Sigma_k (partial C) / (partial z_k^(l+1)) (partial z_k^(l+1)) / (partial z_j^l) \ $
+
+thus we can simplify this to
+
+$ \ delta_j^l = delta_k^(l+1) (partial (Sigma_j w_(k j)^(l+1) f(z_j^l) + b_k^(l+1))) / (partial z_j^l) \ $
+
+and we simplify this again to
+
+$ \ delta_j^l = Sigma_k w_(k j)^(l+1) delta_k^(l+1) \ $
+
+remember that $$
+
+
+
