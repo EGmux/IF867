@@ -194,16 +194,33 @@ imagine a cubic curve
 })
 
 note that if we start from the leftmost point the algorithm would halt, due to the fact that, due to domain constraints, there's no where else to go, however if we start in the rightmost side, one can see that eventually the algoritm is going to halt in the region where $(d f) / (d x) = 0$ a saddle point or maybe in the leftmost point, _depends on the learning rate_, meaning that the algorithm is effectively slicing a plane,if we consider this path to belong to a surface, and looking for points where $(d f) / (d x) = 0$ that happens in sadddle points, global and local minima.
-//
-== An extreme version of gradient descent is to use a mini-batch size of just 1. That is, given a training input, x, we update our weights and biases according to the rules $w_k arrow.r w'_k = w_k - eta (partial C_x) / (partial omega_k)$ and $b_l arrow.r b'_l = b_l - eta (partial C_x) / (partial b_l)$. Then we choose another training input, and update the weights and biases again. And so on, repeatedly. This procedure is known as online, on-line, or incremental learning. In online learnig, a neural network learns from just one training input at a time (just as huamn beings do). Name one advantage and one disadvantage of online learning, compared to stochastic gradient descent with a mini-batch size of, say, 20.
 
-a obvious advantage is a parameter update takes a single iteration, while in the mini-batch size 20 iterations, so a 20x speedup in the first case.
+=== Prove equations BP3 and BP4
 
-another not so obvious advantage is increased guarantees of cost function convergence. If during the algorithm execution a saddle point or local minima is found the extra ammount of noise, that won't be averaged when comparing to the mini-batch size case, allows to escape such points and thus might not need a momentum parameter for the algorithm.
+remember the following, already proved by the author
 
-a disadvantage is excess in noise thus increasing the variance in the performance metrics while training, however such case is minimized in the mini-batch size due to the larger batch size reducing noise per parameter,$omega_i, b_i$, update.
+$
+  \ delta_j^l = (partial C) / (partial z_k^l) & #comment(", error due to weighted sum in the j-th neuron in the l-th layer ") \
+  \ z_j^l = w_(j k)^l a_k^(l-1) + b_j^l & #comment(", j-th neuron in the l-th layer weighted sum")\
+  \
+$
 
+now we need to prove the following
 
+$ \ (partial C) / (partial b_j) = delta_j^l \ $
 
+this can be easily be proven by chain rule application
 
+$ \ (partial C) / (partial b_j^l) = (partial C) / (partial z_j^l)(partial z_j^l) / (partial b_j^l) = delta_j^l \ $
 
+the $(partial z_j^l) / (partial b_j^l) = 1$
+
+this proves BP3
+
+now we prove BP4, again by applying the chain rule
+
+$ \ (partial C) / (partial w_(k j)^l) = (partial C) / (partial z_j^l) (partial z_j^l) / (partial w_(j k)^l) \ $
+
+and the partial derivative for $(partial z_j^l) / (partial w_(j k)^l) = a_k^(l-1)$
+
+thus we have $(partial C) / (partial w_(j k)^l) = a_k^(l-1) delta_j^l$ as desired.
