@@ -276,7 +276,6 @@ and we simplify this again to
 
 $ \ delta_j^l = Sigma_k w_(k j)^(l+1) delta_k^(l+1) \ $
 
-remember that $$
 
 
 
