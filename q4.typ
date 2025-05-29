@@ -45,5 +45,6 @@ advantages is possibly a good accuracy, but a notable disadvantages is no tolera
 
 Mini batch gradient descent is a variation of Batch gradient descent where a subset of samples are selected and thus learning happens faster and also resistant to saddle and local minima the disadvantage is more fine tuning in the hyperparameters required and not as accurate as the Batch gradient descent.
 
+==== 3. How the partial derivaties impact the model weights during training?
 
-
+already answered in the first question, just change the parameter from $theta$ to $w_(i j)^l$ the j-th weight of the i-th neuron in the l-th layer.
